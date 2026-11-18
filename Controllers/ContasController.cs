@@ -6,19 +6,20 @@ namespace BancoAula.Api.Controllers;
 [Route("api/[controller]")]
 public class ContasController : ControllerBase
 {
-    private readonly BancoContext _db;
-    public ContasController(BancoContext db) =>_db = db;
+    private readonly IContaService _service;
 
-    public record ValorDto(decimal Valor);
-    private static int _proximoId = 3;
+    public ContasController(IContaService service)
+    {
+        _service = service;
+    }
 
     [HttpGet]
-    public ActionResult<List<Conta>> Get() => Ok( _db.Contas.ToList());
+    public async Task<ActionResult<List<ContasDTO>>> Get() => Ok( await _service.GetTodasAsync());
     
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<Conta>> GetPorId(int id){
-        var conta = await _db.Contas.FindAsync(id);
+    public async Task<ActionResult<ContasDTO>> GetPorId(int id){
+        var conta = await _service.GetPorIdAsync(id);
         if(conta == null){
             return NotFound();
         }
@@ -26,11 +27,9 @@ public class ContasController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Conta>> Criar(Conta nova){
-        _db.Contas.Add(nova);
-        await _db.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetPorId), new {id = nova.Id}, nova);
+    public async Task<ActionResult<ContasDTO>> Criar(ContasDTO nova){
+        var conta = await _service.CriarAsync(nova);
+        return CreatedAtAction(nameof(GetPorId), new {id = conta.Numero}, conta);
     }
 
     // [HttpPost("{id:int}/depositar")]
@@ -60,12 +59,10 @@ public class ContasController : ControllerBase
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Remover(int id){
-        var conta = await _db.Contas.FindAsync(id);
-        if(conta == null){
+        var conta = await _service.RemoverAsync(id);
+        if(!conta){
             return NotFound();
         }
-        _db.Contas.Remove(conta);
-        await _db.SaveChangesAsync();
         return NoContent();   
     }
 }
