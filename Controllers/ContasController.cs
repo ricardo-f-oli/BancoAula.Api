@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BancoAula.Api.Controllers;
 
@@ -68,4 +69,15 @@ public class ContasController : ControllerBase
         await _db.SaveChangesAsync();
         return NoContent();   
     }
+    [HttpGet("clientes/{clienteId:int}/emprestimos")]
+    public async Task<ActionResult<List<Emprestimo>>> GetEmprestimosPorCliente(int clienteId)
+    {
+        var cliente = await _db.Clientes.FindAsync(clienteId);
+        if (cliente == null)
+        {
+            return NotFound();
+        }
+        var emprestimos = await _db.Emprestimos.Where(e => e.ClienteId == cliente.Id).ToListAsync();
+        return Ok(emprestimos);
+    } 
 }
