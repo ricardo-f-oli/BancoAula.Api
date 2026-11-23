@@ -18,13 +18,7 @@ public class ContasController : ControllerBase
     
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<ContasDTO>> GetPorId(int id){
-        var conta = await _service.GetPorIdAsync(id);
-        if(conta == null){
-            return NotFound();
-        }
-        return Ok(conta);
-    }
+    public async Task<ActionResult<ContaResponseDto>> GetPorId(int id) => Ok(await _service.GetPorIdAsync(id));
 
     [HttpPost]
     public async Task<ActionResult<ContasDTO>> Criar(ContasDTO nova){
@@ -65,4 +59,7 @@ public class ContasController : ControllerBase
         }
         return NoContent();   
     }
+
+    [HttpPost("{id:int}/sacar")]
+    public async Task<ActionResult<ContaResponseDto>> Sacar(int id, ValorDto valor) => Ok(await _service.SacarAsync(id, valor.Valor));
 }
