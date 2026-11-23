@@ -2,12 +2,12 @@
  
 GET {{host}}
 ###
-GET {{host}}/8
+GET {{host}}/3
 ###
 POST {{host}}
 Content-Type: application/json
  
-{ "numero": 2004, "saldo": 300, "tipo": "Corrente", "ativa": true,"clienteId": 2,  "AgenciaId": 1 }
+{ "clienteId": 2, "numero": 2001, "saldo": 300, "tipo": "Corrente", "ativa": true, "AgenciaId": 1 }
 # ###
 # POST {{host}}/50/depositar
 # Content-Type: application/json
@@ -20,3 +20,5 @@ Content-Type: application/json
 # { "tipo": "Poupanca", "saldo": 6000, "ativa": true }
 ###
 DELETE {{host}}/1
+###
+GET {{host}}/clientes/2/emprestimos
