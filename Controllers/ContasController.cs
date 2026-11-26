@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BancoAula.Api.Controllers;
@@ -13,10 +14,19 @@ public class ContasController : ControllerBase
         _service = service;
     }
 
-    [HttpGet]
+    [AllowAnonymous]
+    [HttpGet("publico")]
     public async Task<ActionResult<List<ContasDTO>>> Get() => Ok( await _service.GetTodasAsync());
     
 
+    /// <summary>
+    /// Busca uma conta pelo identificador.
+    /// </summary>
+    /// <param name="id">Id da conta.</param>
+    /// <response code="200">Conta encontrada.</response>
+    /// <response code="404">Conta não existe.</response>
+    [ProducesResponseType(typeof(ContaResponseDto), 200)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpGet("{id:int}")]
     public async Task<ActionResult<ContaResponseDto>> GetPorId(int id) => Ok(await _service.GetPorIdAsync(id));
 
@@ -51,6 +61,7 @@ public class ContasController : ControllerBase
     //     return NoContent();
     // }
 
+    [Authorize(Roles = "Gerente")]
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Remover(int id){
         var conta = await _service.RemoverAsync(id);
