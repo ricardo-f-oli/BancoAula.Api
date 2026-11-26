@@ -2,7 +2,7 @@
  
 GET {{host}}
 ###
-GET {{host}}/3
+GET {{host}}/1001
 ###
 POST {{host}}
 Content-Type: application/json
