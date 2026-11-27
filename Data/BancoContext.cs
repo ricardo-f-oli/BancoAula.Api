@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
-public class BancoContext : DbContext
+public class BancoContext : IdentityDbContext<ApplicationUser>
 {
     public BancoContext(DbContextOptions<BancoContext> options) : base(options)
     {
@@ -14,6 +15,7 @@ public class BancoContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder mb)
     {
+        base.OnModelCreating(mb);
         mb.Entity<Cliente>().HasIndex(c => c.Cpf).IsUnique();
         mb.Entity<Cliente>().Property(c => c.Nome).HasMaxLength(100).IsRequired();
         mb.Entity<Conta>().Property(c => c.Saldo).HasPrecision(12, 2);
