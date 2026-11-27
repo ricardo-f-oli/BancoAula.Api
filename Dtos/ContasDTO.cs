@@ -1,0 +1,1 @@
+public record ContasDTO(int Numero, string Tipo, decimal Saldo, bool Ativa, int ClienteId, int AgenciaId);

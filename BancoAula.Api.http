@@ -2,7 +2,7 @@
  
 GET {{host}}
 ###
-GET {{host}}/3
+GET {{host}}/1001
 ###
 POST {{host}}
 Content-Type: application/json
@@ -20,3 +20,5 @@ Content-Type: application/json
 # { "tipo": "Poupanca", "saldo": 6000, "ativa": true }
 ###
 DELETE {{host}}/1
+###
+GET {{host}}/clientes/2/emprestimos
