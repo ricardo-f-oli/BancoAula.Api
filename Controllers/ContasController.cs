@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BancoAula.Api.Controllers;
 
@@ -91,4 +92,16 @@ public class ContasController : ControllerBase
     
     [HttpGet("{id:int}/buscartransacoes")]
     public async Task<ActionResult<List<Transacao>>> GetTransacoes(int id) => Ok(await _service.GetTransacoesPorContaIdAsync(id));
+    
+    [HttpGet("clientes/{clienteId:int}/emprestimos")]
+    public async Task<ActionResult<List<Emprestimo>>> GetEmprestimosPorCliente(int clienteId)
+    {
+        var cliente = await _db.Clientes.FindAsync(clienteId);
+        if (cliente == null)
+        {
+            return NotFound();
+        }
+        var emprestimos = await _db.Emprestimos.Where(e => e.ClienteId == cliente.Id).ToListAsync();
+        return Ok(emprestimos);
+    } 
 }
