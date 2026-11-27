@@ -43,4 +43,11 @@ public class ContaRepository : IContaRepository
         _context.Contas.Update(conta);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<List<Transacao>> GetTransacoesPorContaIdAsync(int id)
+    {
+        return await _context.Transacoes
+            .Where(t => t.ContaId == id)
+            .ToListAsync();
+    }
 }

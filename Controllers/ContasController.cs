@@ -85,4 +85,10 @@ public class ContasController : ControllerBase
 
     [HttpPost("{id:int}/sacar")]
     public async Task<ActionResult<ContaResponseDto>> Sacar(int id, ValorDto valor) => Ok(await _service.SacarAsync(id, valor.Valor));
+
+    [HttpPost("{id:int}/depositar")]
+    public async Task<ActionResult<ContaResponseDto>> Depositar(int id, ValorDto valor) => Ok(await _service.DepositarAsync(id, valor.Valor));
+    
+    [HttpGet("{id:int}/buscartransacoes")]
+    public async Task<ActionResult<List<Transacao>>> GetTransacoes(int id) => Ok(await _service.GetTransacoesPorContaIdAsync(id));
 }

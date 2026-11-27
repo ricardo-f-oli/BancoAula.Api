@@ -5,4 +5,5 @@ public interface IContaRepository
     Task<Conta> CriarAsync(Conta nova);
     Task AtualizarAsync(Conta conta);
     Task<bool> RemoverAsync(int id);
+    Task<List<Transacao>> GetTransacoesPorContaIdAsync(int id);
 }

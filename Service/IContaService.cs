@@ -5,4 +5,6 @@ public interface IContaService
     Task<ContasDTO> CriarAsync(ContasDTO nova);
     Task<bool> RemoverAsync(int id);
     Task<ContaResponseDto> SacarAsync(int id, decimal valor);
+    Task<ContaResponseDto> DepositarAsync(int id, decimal valor);
+    Task<List<Transacao>> GetTransacoesPorContaIdAsync(int id);
 }

@@ -22,3 +22,12 @@ Content-Type: application/json
 DELETE {{host}}/1
 ###
 GET {{host}}/clientes/2/emprestimos
+
+###
+GET {{host}}/9/buscartransacoes
+
+###
+POST {{host}}/5/depositar
+Content-Type: application/json
+
+{ "valor": 15000}    

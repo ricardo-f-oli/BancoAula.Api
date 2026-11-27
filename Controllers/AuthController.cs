@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+
+using System.Security.Claims;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -41,5 +44,19 @@ public class AuthController : ControllerBase
         }
         var papeis = await _userManager.GetRolesAsync(usuario);
         return Ok(new { token = _tokenService.GerarToken(usuario, papeis) });
+    }
+
+    [Authorize]
+    [HttpGet("eu")]
+    public IActionResult Eu()
+    {
+        return Ok(new
+        {
+            id = User.FindFirstValue(ClaimTypes.NameIdentifier),
+            email = User.FindFirstValue(ClaimTypes.Email),
+            nome = User.Identity?.Name,
+            papeis = User.FindAll(ClaimTypes.Role).
+            Select(c => c.Value)
+        });
     }
 }

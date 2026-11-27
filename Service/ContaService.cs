@@ -52,6 +52,26 @@ public class ContaService : IContaService
         return await _repository.RemoverAsync(id);
     }
 
+    public async Task<ContaResponseDto> DepositarAsync(int id, decimal valor)
+    {
+       var conta = await _repository.GetPorIdAsync(id) ??
+       throw new KeyNotFoundException($"Conta com id {id} não encontrada.");
+       conta.Saldo += valor;
+       conta.Transacoes.Add(new Transacao{
+            Descricao = "Depósito",
+            Tipo = "Tipo Deposito",
+            Valor = valor
+        });
+        await _repository.AtualizarAsync(conta);
+        return Mapper(conta);
+        
+    }
+
+    public async Task<List<Transacao>> GetTransacoesPorContaIdAsync(int id)
+    {
+        return await _repository.GetTransacoesPorContaIdAsync(id);
+    }
+
     private static ContaResponseDto Mapper(Conta conta)
     {
         return new ContaResponseDto
@@ -62,5 +82,6 @@ public class ContaService : IContaService
             Saldo = conta.Saldo
         };
     }
+
 
 }
