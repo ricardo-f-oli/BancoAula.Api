@@ -10,8 +10,6 @@ var builder = WebApplication.CreateBuilder(args);
 var jwt = builder.Configuration.GetSection("Jwt");
 var chave = Encoding.UTF8.GetBytes(jwt["Key"]!);
 
-
-
 builder.Services.AddControllers();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options =>
@@ -55,11 +53,11 @@ builder.Services.AddSwaggerGen(o =>
         BearerFormat = "JWT",
         Description = "Cole o token JWT do login."
     });
- 
-    o.AddSecurityRequirement(document => new OpenApiSecurityRequirement
-    {
-        [new OpenApiSecuritySchemeReference("Bearer", document)] = new List<string>()
-    });
+
+    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    o.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFile));
+
+    o.OperationFilter<AuthorizeOperationFilter>();
 });
 
 builder.Services.AddScoped<IContaService, ContaService>();
@@ -82,3 +80,20 @@ if(app.Environment.IsDevelopment())
 app.MapControllers();
 
 app.Run();
+
+public class AuthorizeOperationFilter : Swashbuckle.AspNetCore.SwaggerGen.IOperationFilter
+{
+    public void Apply(OpenApiOperation operation, Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext context)
+    {
+        var metadata = context.ApiDescription.ActionDescriptor.EndpointMetadata;
+        var exigeAuth = metadata.OfType<Microsoft.AspNetCore.Authorization.IAuthorizeData>().Any()
+                        && !metadata.OfType<Microsoft.AspNetCore.Authorization.IAllowAnonymous>().Any();
+        if (!exigeAuth) return;
+
+        operation.Security ??= new List<OpenApiSecurityRequirement>();
+        operation.Security.Add(new OpenApiSecurityRequirement
+        {
+            [new OpenApiSecuritySchemeReference("Bearer", context.Document)] = new List<string>()
+        });
+    }
+}

@@ -9,6 +9,10 @@ public class ContasController : ControllerBase
 {
     private readonly IContaService _service;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ContasController"/> class.
+    /// </summary>
+    /// <param name="service">The account service.</param>
     public ContasController(IContaService service)
     {
         _service = service;
@@ -22,10 +26,18 @@ public class ContasController : ControllerBase
     /// <summary>
     /// Busca uma conta pelo identificador.
     /// </summary>
+    /// <remarks>
+    /// Requer autenticação: clique em **Authorize** e cole o token JWT obtido no login.
+    ///
+    /// Exemplo: `GET /api/contas/1`
+    /// </remarks>
     /// <param name="id">Id da conta.</param>
     /// <response code="200">Conta encontrada.</response>
+    /// <response code="401">Token ausente ou inválido.</response>
     /// <response code="404">Conta não existe.</response>
-    [ProducesResponseType(typeof(ContaResponseDto), 200)]
+    [Authorize]
+    [ProducesResponseType(typeof(ContaResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpGet("{id:int}")]
     public async Task<ActionResult<ContaResponseDto>> GetPorId(int id) => Ok(await _service.GetPorIdAsync(id));
